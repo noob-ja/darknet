@@ -141,16 +141,21 @@ def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
     free_image(im)
     free_detections(dets, num)
     return res
-    
+
+import cv2
 if __name__ == "__main__":
-    #net = load_net("cfg/densenet201.cfg", "/home/pjreddie/trained/densenet201.weights", 0)
-    #im = load_image("data/wolf.jpg", 0, 0)
-    #meta = load_meta("cfg/imagenet1k.data")
-    #r = classify(net, meta, im)
-    #print r[:10]
-    net = load_net("cfg/tiny-yolo.cfg", "tiny-yolo.weights", 0)
+    net = load_net("cfg/yolov3-tiny.cfg", "yolov3-tiny.weights", 0)
     meta = load_meta("cfg/coco.data")
-    r = detect(net, meta, "data/dog.jpg")
-    print r
+    r = detect(net, meta, "data/eagle.jpg")
+    img = cv2.imread('data/eagle.jpg', cv2.IMREAD_COLOR)
+    for r_ in r:
+        print r_
+        points = tuple([int(p) for p in r_[2]])
+        point1 = (points[0]-int(points[2]/2), points[1]-int(points[3]/2))
+        point2 = (points[0]+int(points[2]/2), points[1]+int(points[3]/2))
+        cv2.rectangle(img, point1, point2, (255,0,0), 2)
+        cv2.putText(img, r_[0]+' '+str(int(r_[1]*100))+'%', point1, cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2 )
+    cv2.imshow('lalala', img)
+    k = cv2.waitKey(0)
     
 
